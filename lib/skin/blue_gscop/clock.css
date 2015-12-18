@@ -1,0 +1,44 @@
+/* == Clock == */
+#clock {
+	bottom:5px;
+	border-radius: 20px 0px 50px 0px;
+	border:3px solid #0679CA;
+	height:auto;
+	background-color:#FFF;
+	//background:#FFF url('../../../lib/img/logo.gif') 50px no-repeat ;
+	left:0px;
+	position:absolute;
+	width:22%;
+	z-index:1000;
+}
+		
+#Date { font-family:'lib/font/BebasNeueRegular', Arial, Helvetica, sans-serif; font-size:20px; text-align:center;color:#818181;  }
+ul { margin:0 auto; padding:0px; list-style:none; text-align:center; }
+ul li { display:inline; font-size:3.5em; text-align:center; font-family:'lib/font/BebasNeueRegular', Arial, Helvetica, sans-serif;color:#0679CA; }
+@-webkit-keyframes mymove 
+
+{
+0% {opacity:1.0; text-shadow:0 0 20px #00c6ff;}
+50% {opacity:0; text-shadow:none; }
+100% {opacity:1.0; text-shadow:0 0 20px #00c6ff; }	
+}
+
+
+@-moz-keyframes mymove 
+{
+0% {opacity:1.0; text-shadow:0 0 20px #00c6ff;}
+50% {opacity:0; text-shadow:none; }
+100% {opacity:1.0; text-shadow:0 0 20px #00c6ff; }	
+}
+
+@font-face {
+	font-family: 'lib/font/BebasNeueRegular';
+	src: url('lib/font/BebasNeue-webfont.eot');
+	src: url('lib/font/BebasNeue-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('lib/font/BebasNeue-webfont.woff') format('woff'),
+		 url('lib/font/BebasNeue-webfont.ttf') format('truetype'),
+		 url('lib/font/BebasNeue-webfont.svg#BebasNeueRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+
+}

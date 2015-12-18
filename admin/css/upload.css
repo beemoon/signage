@@ -1,0 +1,126 @@
+body{
+	padding-top:50px;
+	font-family: "Lucida Grande",Tahoma,Arial,Verdana,sans-serif;
+	font-size: small;
+}
+
+h2{
+	clear:left;
+	font-style:italic;
+	
+	font-size:110%;
+	font-weight:bold;
+	margin:0 0 3px;
+}
+
+input{
+    border:solid 2px rgba(0, 0, 0, 0.3);
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 5px;
+    text-align:center;
+}
+
+.clearBoth { clear:both; }
+
+#wrapper{
+    margin: 0 auto;
+    padding-top:30px;
+    width: 900px;
+}
+
+#centerContent{
+	width:800px;
+	margin:0 auto;
+}
+
+#drop{
+	float:left;
+    margin: auto;
+    padding-top:0px;
+}
+
+.dropzone{
+	background:url("../img/upload.png") center bottom no-repeat;	
+}
+
+#content{
+	float:right;
+	min-height:150px;
+	padding:0px 10px 10px 50px;
+}
+
+#titreSlide{
+	width:260.7px;
+	margin:0 0 50px 0;
+}
+
+#date_timepicker_start{
+	width:160px;
+}
+#date_timepicker_end{
+	width:160px;
+}
+
+#dureeAff{
+	padding:10px 0px 30px;
+}
+
+.inputDate{
+	padding: 5px 0px 0px 30px;
+}
+
+#descriptifTxt{
+	width:400px;
+	height:80px;
+	margin-top:10px;
+	border:solid 2px rgba(0, 0, 0, 0.3);
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    padding:5px;
+}
+
+#descriptif{
+padding:50px 0px 30px 0px;
+
+}
+
+.form_description{
+	border-bottom:1px dotted #ccc;
+	clear:both;
+	display:inline-block;
+	margin:0 0 1em;
+}
+
+.form_description[class]{
+	display:block;
+}
+
+.form_description h1{
+	clear:left;
+	font-size:160%;
+	font-weight:400;
+	margin:0 0 3px;
+}
+
+.form_description p{
+	font-size:95%;
+	line-height:130%;
+	margin:0 0 12px;
+}
+
+.save{
+	text-align:center;
+	border-top: dotted 1px black;
+	padding:30px 0 10px 0;
+	width:800px;
+	margin:0 auto;
+}
+
+.ui-tabs {
+	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+	padding: .2em;
+	width:1000px;
+	margin:0px auto;
+}

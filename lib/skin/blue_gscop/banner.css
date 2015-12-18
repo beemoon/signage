@@ -1,0 +1,66 @@
+.banner {
+	bottom:15px;
+	max-height:16px;
+	background-color:#FFF;
+	border:1px solid #73AD21;
+	left:15%;
+	position:absolute;
+	z-index:900;
+	color:#585858;
+	padding:5px;
+	text-align:center;
+	display:inline-block;
+	overflow:hidden;
+	box-shadow:0 0 15px #73AD21;
+	width:100%;	
+}
+ 
+/*http://labs.viaxoft.com/texte-defilant-en-css*/
+.defile {
+	display:block;
+	animation:linear  marqueelike 50s infinite ;
+	margin-left:-100%;
+	padding:0 5px;
+	text-align:left;
+	font-weight:bold;
+}
+
+.defile {
+	display:block;
+	-webkit-animation:linear marqueelike 50s infinite ;
+	-moz-animation:linear marqueelike 50s infinite ;
+	-o-animation:linear marqueelike 50s infinite ;
+	-ms-animation:linear marqueelike 50s infinite ;
+	animation:linear marqueelike 50s infinite ;
+	margin-left:-100%;
+}
+
+.defile:after {
+	content:attr(data-text);
+	position:absolute;
+	white-space:nowrap;
+	padding-left:10px;
+}
+
+@-webkit-keyframes marqueelike {
+	0%, 100% {margin-left:0;}
+	99.99% {margin-left:-100%;}
+ }
+@-moz-keyframes marqueelike {
+	0%, 100% {margin-left:0;}
+	99.99% {margin-left:-100%;}
+ }
+@-o-keyframes marqueelike {
+	0%, 100% {margin-left:0;}
+	99.99% {margin-left:-100%;}
+ }
+@-ms-keyframes marqueelike {
+	0%, 100% {margin-left:0;}
+	99.99% {margin-left:-100%;}
+ }
+@keyframes marqueelike {
+	0%, 100% {margin-left:0;}
+	99.99% {margin-left:-100%;}
+ }
+
+
