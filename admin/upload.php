@@ -25,6 +25,21 @@ if (!empty($_FILES)) {
     // rename to unique filename (timestamp)
     $targetFile =  $targetPath. $ds . $_type[0] . $ds . time() . '.' . $path_parts['extension'];
     
+    /* prepare information to record slide */    
+		$slideInf['duree']=$_POST['duree'];  
+		$slideInf['dateDebut']=$_POST['date_timepicker_start'];
+		
+		if ($slideInf['duree']="temporaire"){
+			$slideInf['dateFin']=$_POST['date_timepicker_end'];
+		}else{
+			$slideInf['dateFin']="000";
+		}
+		$slideInf['titreSlide']=$_POST['titreSlide'];
+		$slideInf['description']=$_POST['descriptif'];
+		
+		file_put_contents('filename.txt', print_r($slideInf,true));
+    /* end */
+    
 	move_uploaded_file($tempFile,$targetFile);	
 	chmod($targetFile, 0777);
 	
