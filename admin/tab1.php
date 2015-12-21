@@ -5,7 +5,7 @@
 		<p>Informations pour la gestion et l'affichage du slide</p>
 	</div>
 
-	<form id="myDropzoneForm" method="post">
+	<form id="myDropzoneForm" enctype="multipart/form-data" method="POST">
 		<div id="centerContent">
 						
 			<div id="drop">
@@ -30,11 +30,11 @@
 						<input id="temporaire" name="duree" class="radio" type="radio" value="temporaire" checked />
 						<label class="choice">Temporaire (date et heure)</label>
 						<div class="inputDate">
-							du <input id="date_timepicker_start" type="text" > au <input id="date_timepicker_end" class="validate[required]" value="" type="text">
+							du <input id="date_timepicker_start" name="date_timepicker_start" type="text" > au <input id="date_timepicker_end" name="date_timepicker_end"class="validate[required]" value="" type="text">
 						</div>
 					</div>
 					<div>
-						<input id="permanent" name="duree" class="radio" type="radio" value="temporaire"/>
+						<input id="permanent" name="duree" class="radio" type="radio" value="permanent"/>
 						<label class="choice" >Permanent</label>
 					</div>
 				</div>
@@ -110,11 +110,14 @@ Dropzone.options.dropHere = {
 	autoProcessQueue: false,
 	acceptedFiles: "image/*,video/*,application/pdf",
 	url:"upload.php",
-	maxFiles: 1,
+	uploadMultiple: true,
+	parallelUploads: 100,
+    maxFiles: 100,
 	maxFilesize: 5,
 				
 	init: function() {
 			var myZone = this;
+			
 			document.querySelector("#saveButton").addEventListener("click", function(e) {
 				if ($("#myDropzoneForm").validationEngine('validate')){
 					e.preventDefault();
@@ -126,12 +129,12 @@ Dropzone.options.dropHere = {
 			this.on("maxfilesexceeded", function(file){
 				alert('Vous ne pouvez pas uploader plus de 1 fichier!');
 			});
-				
+			/*	
 			this.on("success", function (file, response) {
 				alert('Ajout ok');
 				location.reload(true);
 			});	
-			
+			*/
 			this.on("addedfile", function(file) {
 				$( "#saveButton" ).prop( "disabled", false );	
 				if (file.type.match('video.*')) {
@@ -141,6 +144,27 @@ Dropzone.options.dropHere = {
 				this.emit("thumbnail", file, "img/pdf.png");
 				}
 				$('#titreSlide').val(file.name);
+			});
+						
+			this.on('sendingmultiple', function (data, xhr, formData) {
+					formData.append("titreSlide", $("#titreSlide").val());
+					formData.append("duree", $("#temporaire").val());
+					formData.append("duree", $("#permanent").val());
+					formData.append("date_timepicker_start", $("#date_timepicker_start").val());
+                    formData.append("date_timepicker_end", $("#date_timepicker_end").val());
+                    formData.append("descriptif", $("#descriptifTxt").val());    
+                });             
+            
+            this.on("sendingmultiple", function() {
+			  
+			});
+			
+			this.on("successmultiple", function(files, response) {
+				alert('Ajout ok');
+				location.reload(true);
+			});
+			this.on("errormultiple", function(files, response) {
+			  
 			});
 					
 	}
