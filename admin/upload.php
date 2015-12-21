@@ -26,8 +26,13 @@ if (!empty($_FILES)) {
     $targetFile =  $targetPath. $ds . $_type[0] . $ds . time() . '.' . $path_parts['extension'];
     
     /* prepare information to record slide */    
-		$slideInf['duree']=$_POST['duree'];  
-		$slideInf['dateDebut']=$_POST['date_timepicker_start'];
+		$slideInf['duree']=$_POST['duree'];
+		
+		$format = 'Y/m/d H:i';
+		$date = DateTime::createFromFormat($format, $_POST['date_timepicker_start']);
+		$slideInf['dateDebut']=$date->getTimestamp();
+		
+		//mktime(h, M, s, m, d, y);
 		
 		if ($slideInf['duree']="temporaire"){
 			$slideInf['dateFin']=$_POST['date_timepicker_end'];
