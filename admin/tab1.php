@@ -1,59 +1,59 @@
-<div id="wrapper">
+<div id="wrapper" >
 	
 	<div class="form_description">
 		<h1>Paramètres d'affichage</h1>
 		<p>Informations pour la gestion et l'affichage du slide</p>
 	</div>
 
-	<form id="myDropzoneForm" enctype="multipart/form-data" method="POST">
-		<div id="centerContent">
-						
-			<div id="drop">
-				
-				<div class="dropzone" id="dropHere" >
-					<div class="fallback">
-						<input name="file" type="file" class="descriptif" />
-					</div>
-				</div>
-				
-				<div id="titre">
-					<h2>Titre</h2>
-					<input id="titreSlide" name="titreSlide">
-				</div>
-				 	 
-			</div>
-			
-			<div id="content" >
-				<div class="affichage">
-					<h2>Durée d'affichage</h2>
-					<div id="dureeAff">
-						<input id="temporaire" name="duree" class="radio" type="radio" value="temporaire" checked />
-						<label class="choice">Temporaire (date et heure)</label>
-						<div class="inputDate">
-							du <input id="date_timepicker_start" name="date_timepicker_start" type="text" > au <input id="date_timepicker_end" name="date_timepicker_end"class="validate[required]" value="" type="text">
-						</div>
-					</div>
-					<div>
-						<input id="permanent" name="duree" class="radio" type="radio" value="permanent"/>
-						<label class="choice" >Permanent</label>
-					</div>
-				</div>
-				
-				<div id="descriptif">
-					<h2>Descriptif (optionnel mais conseillé)</h2>
-					<div>
-						<textarea id="descriptifTxt" name="descriptif" class="descriptif"></textarea>
-					</div>
+	<form id="myDropzoneForm" class="dropzone" enctype="multipart/form-data" method="post" action="upload.php"> 
+	<div id="centerContent">
+				  
+	   <div id="drop" >
+			<div id="dropHere" >
+				<div class="dz-message"></div>
+				<div class="fallback">
+					<input id="file" name="file" type="file" class="descriptif" />
+					
 				</div>
 			</div>
 			
-			<div class="clearBoth save">
-				<input class="submit" type="submit" value="Enregistrer" id="saveButton" name="saveButton" disabled />&nbsp;&nbsp;&nbsp;<input id="cancelButton" name="cancelButton" class="cancelButton" type="button" value="Annuler" />
-			</div>
-			
+			<div id="titre">
+				<h2>Titre</h2>
+				<input id="titreSlide" name="titreSlide">
+			</div>	 
 		</div>
+		
+		<div id="content" >
+			<div class="affichage">
+				<h2>Durée d'affichage</h2>
+				<div id="dureeAff">
+					<input id="temporaire" name="duree" class="radio" type="radio" value="temporaire" checked />
+					<label class="choice">Temporaire (date et heure)</label>
+					<div class="inputDate">
+						du <input id="date_timepicker_start" name="date_timepicker_start" type="text" > au <input id="date_timepicker_end" name="date_timepicker_end"class="validate[required]" value="" type="text">
+					</div>
+				</div>
+				<div>
+					<input id="permanent" name="duree" class="radio" type="radio" value="permanent"/>
+					<label class="choice" >Permanent</label>
+				</div>
+			</div>
+			
+			<div id="descriptif">
+				<h2>Descriptif (optionnel mais conseillé)</h2>
+				<div>
+					<textarea id="descriptifTxt" name="descriptif" class="descriptif"></textarea>
+				</div>
+			</div>
+		</div>				
+				
+	</div>
 	</form>
-       
+	
+	<div class="clearBoth save" >
+		<input class="submit" type="submit" value="Enregistrer" id="saveButton" name="saveButton" />&nbsp;&nbsp;&nbsp;<input id="cancelButton" name="cancelButton" class="cancelButton" type="button" value="Annuler" />
+	</div>
+	
 </div>
 
 <script type="text/javascript">
@@ -104,13 +104,16 @@
 
 
 /* Conf de la zone Dropzone */
-Dropzone.options.dropHere = false;
+Dropzone.options.myDropzoneForm = false;
 
-Dropzone.options.dropHere = {
+Dropzone.options.myDropzoneForm = {
+	paramName: 'file',
 	autoProcessQueue: false,
 	acceptedFiles: "image/*,video/*,application/pdf",
 	url:"upload.php",
-	uploadMultiple: true,
+	previewsContainer: '#dropHere',
+	clickable: "#dropHere",
+	uploadMultiple: false,
 	parallelUploads: 100,
     maxFiles: 100,
 	maxFilesize: 5,
@@ -129,12 +132,12 @@ Dropzone.options.dropHere = {
 			this.on("maxfilesexceeded", function(file){
 				alert('Vous ne pouvez pas uploader plus de 1 fichier!');
 			});
-			/*	
+				
 			this.on("success", function (file, response) {
 				alert('Ajout ok');
 				location.reload(true);
 			});	
-			*/
+			
 			this.on("addedfile", function(file) {
 				$( "#saveButton" ).prop( "disabled", false );	
 				if (file.type.match('video.*')) {
@@ -145,8 +148,10 @@ Dropzone.options.dropHere = {
 				}
 				$('#titreSlide').val(file.name);
 			});
-						
+			
+			/*			
 			this.on('sendingmultiple', function (data, xhr, formData) {
+					formData.append("file", $("#file").val());
 					formData.append("titreSlide", $("#titreSlide").val());
 					formData.append("duree", $("#temporaire").val());
 					formData.append("duree", $("#permanent").val());
@@ -157,8 +162,7 @@ Dropzone.options.dropHere = {
             
             this.on("sendingmultiple", function() {
 			  
-			});
-			
+			});			
 			this.on("successmultiple", function(files, response) {
 				alert('Ajout ok');
 				location.reload(true);
@@ -166,6 +170,7 @@ Dropzone.options.dropHere = {
 			this.on("errormultiple", function(files, response) {
 			  
 			});
+			*/
 					
 	}
     	

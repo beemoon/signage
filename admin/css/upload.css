@@ -37,11 +37,34 @@ input{
 #drop{
 	float:left;
     margin: auto;
-    padding-top:0px;
+    padding-top:50px;
+}
+
+#dropHere{
+  height: 150px;
+  width:266.7px;
+  border: 2px dotted rgba(0, 0, 0, 0.3);
+  background: white;
+  padding: 2px; 
+  border-radius:10px;
+  margin-bottom: 20px;
+  background:url("../img/upload.png") center bottom no-repeat;
+  cursor:pointer;
 }
 
 .dropzone{
-	background:url("../img/upload.png") center bottom no-repeat;	
+  height: none;
+  width:none;
+  border: none;
+  background: none;
+  padding: none; 
+  border-radius:none;
+}
+
+#myDropzoneForm{
+	width:900px;
+	margin:auto;
+	position: relative;
 }
 
 #content{
@@ -123,4 +146,9 @@ padding:50px 0px 30px 0px;
 	padding: .2em;
 	width:1000px;
 	margin:0px auto;
+}
+
+.dz-message::after{
+	content:"Cliquez ou glissez \A votre document dans cette zone";
+	white-space: pre;
 }
