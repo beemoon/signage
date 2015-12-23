@@ -1,5 +1,4 @@
 <?php
-/* upload HTML5: http://www.dropzonejs.com */
 
 include('function.php');
 $storeFolder = '../data';
@@ -21,29 +20,29 @@ if (!empty($_FILES)) {
 	}
     
     $path_parts = pathinfo($_FILES['file']['name']); 
-    //$targetFile =  $targetPath. $ds . $_type[0] . $ds . $path_parts['filename'] . '.' . $path_parts['extension'];
-    // rename to unique filename (timestamp)
-    $targetFile =  $targetPath. $ds . $_type[0] . $ds . time() . '.' . $path_parts['extension'];
     
-    /* prepare information to record slide */    
+    /* prepare information to record slide    */
 		$slideInf['duree']=$_POST['duree'];
 		
 		$format = 'Y/m/d H:i';
-		$date = DateTime::createFromFormat($format, $_POST['date_timepicker_start']);
-		$slideInf['dateDebut']=$date->getTimestamp();
+		$dateStart = DateTime::createFromFormat($format, $_POST['date_timepicker_start']);
+		$slideInf['dateDebut']=$dateStart->getTimestamp();
 		
-		//mktime(h, M, s, m, d, y);
-		
-		if ($slideInf['duree']="temporaire"){
-			$slideInf['dateFin']=$_POST['date_timepicker_end'];
+		if ($slideInf['duree']=="temporaire"){
+			$dateEnd = DateTime::createFromFormat($format, $_POST['date_timepicker_end']);
+			$slideInf['dateFin']=$dateEnd->getTimestamp();
 		}else{
 			$slideInf['dateFin']="000";
 		}
 		$slideInf['titreSlide']=$_POST['titreSlide'];
 		$slideInf['description']=$_POST['descriptif'];
 		
-		file_put_contents('filename.txt', print_r($slideInf,true));
+		file_put_contents($targetPath. $ds . $_type[0] . $ds . $path_parts['filename'].'.txt', print_r($slideInf,true));
     /* end */
+    
+    //$targetFile =  $targetPath. $ds . $_type[0] . $ds . $path_parts['filename'] . '.' . $path_parts['extension'];
+    // rename to unique filename (timestamp)
+    $targetFile =  $targetPath. $ds . $_type[0] . $ds . $slideInf['dateDebut'].'_'.$slideInf['dateFin']. '.' . $path_parts['extension'];
     
 	move_uploaded_file($tempFile,$targetFile);	
 	chmod($targetFile, 0777);
@@ -68,7 +67,7 @@ if (!empty($_FILES)) {
 		pdftojpg($targetFile,$targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg');
 		chmod($targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg', 0777);
 		// rename to unique filename (timestamp)
-		//rename($targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg',$targetPath. $ds . 'image' . $ds . time() . '.jpg');
+		rename($targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg',$targetPath. $ds . 'image' . $ds . $slideInf['dateDebut'].'_'.$slideInf['dateFin'] . '.jpg');
 	}
 	 
 	/* On vide le repertoire temp et on le supprime */
@@ -78,5 +77,16 @@ if (!empty($_FILES)) {
 	}
      
 }
+
+/* create slide.inc */
+
+// 1- On récupere tout les fichiers (images, videos)
+
+// 2- On controle leur durée de validité
+
+// 3- On créer le slide.inc
+
+
+// Comment on recharge la page web ?????
 
 ?>
