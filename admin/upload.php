@@ -2,7 +2,7 @@
 
 include('function.php');
 $storeFolder = '../data';
-$allowedType = array('image', 'video','audio');
+$allowedType = array('image', 'video');
 
 $ds = DIRECTORY_SEPARATOR;
 if (!empty($_FILES)) {
@@ -22,6 +22,7 @@ if (!empty($_FILES)) {
     $path_parts = pathinfo($_FILES['file']['name']); 
     
     /* prepare information to record slide    */
+		$uniqueID = time();
 		$slideInf['duree']=$_POST['duree'];
 		
 		$format = 'Y/m/d H:i';
@@ -35,58 +36,57 @@ if (!empty($_FILES)) {
 			$slideInf['dateFin']="000";
 		}
 		$slideInf['titreSlide']=$_POST['titreSlide'];
-		$slideInf['description']=$_POST['descriptif'];
-		
-		file_put_contents($targetPath. $ds . $_type[0] . $ds . $path_parts['filename'].'.txt', print_r($slideInf,true));
+		$slideInf['path'] = $_type[0];
+			
     /* end */
     
-    //$targetFile =  $targetPath. $ds . $_type[0] . $ds . $path_parts['filename'] . '.' . $path_parts['extension'];
     // rename to unique filename (timestamp)
-    $targetFile =  $targetPath. $ds . $_type[0] . $ds . $slideInf['dateDebut'].'_'.$slideInf['dateFin']. '.' . $path_parts['extension'];
+    $targetFileName = $path_parts['filename'] . '.' . $path_parts['extension'];
+    $targetFile =  $targetPath. $ds . $_type[0] . $ds . $targetFileName;
+    //$targetFile =  $targetPath. $ds . $_type[0] . $ds . $uniqueID . '.' . $path_parts['extension'];
     
-	move_uploaded_file($tempFile,$targetFile);	
-	chmod($targetFile, 0777);
+    move_uploaded_file($tempFile,$targetFile);	
 	
 	/* 
 	 * Traitement des fichiers PDF dans le repertoire temp
 	 * avant suppression 
 	 */
 	if ($path_parts['extension'] == "pdf"){
-		/*
-		if(!is_dir($targetPath. $ds . $path_parts['extension'])){
-		  mkdir($targetPath. $ds . $path_parts['extension'],0777);
-		  chmod($targetPath. $ds . $path_parts['extension'],0777);
+		$_type[0] = 'image';
+		if(!is_dir($targetPath. $ds . $_type[0])){
+		  mkdir($targetPath. $ds . $_type[0],0777);
+		  chmod($targetPath. $ds . $_type[0],0777);
 		}
-		// move file		
-		rename($targetFile,$targetPath. $ds . $path_parts['extension'] . $ds . $_FILES['file']['name']);
-		*/
-		if(!is_dir($targetPath. $ds . 'image')){
-		  mkdir($targetPath. $ds . 'image',0777);
-		  chmod($targetPath. $ds . 'image',0777);
-		}
-		pdftojpg($targetFile,$targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg');
-		chmod($targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg', 0777);
+		
+		$targetFileName = $path_parts['filename'] . '.jpg';
+		pdftojpg($targetFile,$targetPath. $ds . $_type[0] . $ds . $targetFileName);
+		$slideInf['path'] = $_type[0];
+		
 		// rename to unique filename (timestamp)
-		rename($targetPath. $ds . 'image' . $ds . $path_parts['filename'] . '.jpg',$targetPath. $ds . 'image' . $ds . $slideInf['dateDebut'].'_'.$slideInf['dateFin'] . '.jpg');
+		//$targetFile = $targetPath. $ds . $_type[0] . $ds . $uniqueID . '.jpg';
+		//rename($targetPath. $ds . $_type[0] . $ds . $path_parts['filename'] . '.jpg',$targetFile);
 	}
-	 
+	
+	// ajoute la description du slide
+	$slideInf['description']=nl2br(htmlentities($_POST['descriptif'],ENT_QUOTES));
+	
+	chmod($targetFile, 0777);
+	
 	/* On vide le repertoire temp et on le supprime */
 	if(is_dir($targetPath. $ds . 'temp') && count(glob($targetPath. $ds . 'temp' . $ds .'*'))!=0){
 	  array_map('unlink', glob($targetPath. $ds . 'temp' . $ds .'*'));
 	  rmdir($targetPath. $ds . 'temp');
 	}
-     
+	
+	addToSlideDB($targetFileName,$slideInf,$storeFolder. $ds .'slideDB.ini');
+	
 }
 
-/* create slide.inc */
+/* fichier de log pour controle */
+//file_put_contents($targetPath. $ds . $_type[0] . $ds . $path_parts['filename'].'.txt', print_r($slideInf,true));
+//file_put_contents($storeFolder. $ds .'debug.ini',print_r($slideInf,true));
 
-// 1- On récupere tout les fichiers (images, videos)
-
-// 2- On controle leur durée de validité
-
-// 3- On créer le slide.inc
-
-
-// Comment on recharge la page web ?????
+/* génération des slides */
+include('manage.php');
 
 ?>

@@ -101,7 +101,7 @@
 Dropzone.options.myDropzoneForm = false;
 Dropzone.options.myDropzoneForm = {
 	autoProcessQueue: false,
-	acceptedFiles: "image/*,video/*,application/pdf",
+	acceptedFiles: "image/*,video/webm,,video/mp4,video/ogg,application/pdf",
 	url:"upload.php",
 	uploadMultiple: false,
 	parallelUploads: 100,
