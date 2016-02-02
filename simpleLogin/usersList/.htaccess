@@ -1,0 +1,4 @@
+<Files *.acl> 
+Order Deny, Allow 
+Deny from all
+</Files>

@@ -1,4 +1,24 @@
 <?php
+// On charge le fichier de conf
+$confINIFile = $_SERVER['DOCUMENT_ROOT'].substr(dirname(dirname(__FILE__)),strlen($_SERVER['DOCUMENT_ROOT'])) . DIRECTORY_SEPARATOR .'conf' . DIRECTORY_SEPARATOR . 'config.ini';
+if (is_file($confINIFile)){
+	$confINI = parse_ini_file($confINIFile,true);
+} else {
+	$confINI = array();
+}
+
+// On defini les constantes
+foreach($confINI as $key=>$val){
+	define('__'.$key.'__', $confINI[$key][0]);	
+}
+
+$ds = DIRECTORY_SEPARATOR;
+
+
+if($_SERVER['DOCUMENT_ROOT'].$_SERVER['REQUEST_URI'].'index.php' !== __install_DIR__.$ds.'index.php'){
+	include($_SERVER['DOCUMENT_ROOT'].substr(dirname(dirname(__FILE__)),strlen($_SERVER['DOCUMENT_ROOT'])) . DIRECTORY_SEPARATOR ."simpleLogin/beeProtect.php");
+}
+
 function pdftojpg($pdfFile,$jpgFile){
 	/*  
 	 * imagemagick and php5-imagick required 
@@ -53,6 +73,7 @@ function write_slideDB($array, $file){
     
     }
     safefilerewrite($file, implode("\r", $res));
+    //chmod($file,0777);
 }
 
 function safefilerewrite($fileName, $dataToSave){    
@@ -85,6 +106,7 @@ function addToSlideDB($slideID,$newSlide,$slideDBFile){
 		$slideDB[$slideID]=$newSlide;
 		write_slideDB($slideDB, $slideDBFile);
 	}
+	return $slideDB;
 	
 }
 
@@ -94,6 +116,56 @@ function delFromSlideDB($slideID,$slideDBFile){
 		$slideDB = parse_ini_file($slideDBFile,true);
 		unset($slideDB[$slideID]);
 		write_slideDB($slideDB, $slideDBFile);
+		return $slideDB;
 	}
+}
+
+function createThumbs( $imagesSrc,$thumbWidth,$ratio){
+		try
+	{
+	        /*** the image file ***/
+	        $image = $imagesSrc;
+	
+	        /*** a new imagick object ***/
+	        $im = new Imagick();
+	
+	        /*** ping the image ***/
+	        $im->pingImage($image);
+	        
+	        $width = $im->getImageWidth();
+			$height = $im->getImageHeight();
+			if ($width < $height){
+				$height = $im->getImageWidth();
+				$width = $im->getImageHeight();
+			}
+			
+			// calculate thumbnail size
+			if (!isset($ratio)){
+				$ratio = round($width / $height,2);
+			}
+			$new_width = $thumbWidth;
+			$new_height = $new_width / $ratio;
+			
+	        /*** read the image into the object ***/
+	        $im->readImage( $image );
+	
+	        /*** thumbnail the image ***/
+	        $im->thumbnailImage( $new_width, $new_height,true );
+	
+	        /*** Write the thumbnail to disk ***/
+	        $im->writeImage( dirname($imagesSrc).'/'.'thumb_'.basename($imagesSrc ) );
+	
+	        /*** Free resources associated with the Imagick object ***/
+	        $im->destroy();
+	        return dirname($imagesSrc).'/'.'thumb_'.basename($imagesSrc );
+	        
+	}
+	catch(Exception $e)
+	{
+	        print $e->getMessage();
+	        return $imagesSrc;
+	}
+  
+
 }
 ?>

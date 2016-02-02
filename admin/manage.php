@@ -1,50 +1,46 @@
 <?php
+
+// On charge le fichier des fonctions
 include_once('function.php');
-$storeFolder = '../data';
 
-$ds = DIRECTORY_SEPARATOR;
-
-
+// controle du prochain refresh
+include(__install_DIR__ . $ds.'nextTime.inc');
 
 /* create slide.inc */
 
 // 1- On récupere tout les fichiers (images, videos)
-$imageDir= $storeFolder . '/image';
-$videoDir= $storeFolder . '/video';
+$imageDir= __dataStore__  . '/image';
+$videoDir= __dataStore__  . '/video';
 $scanned_imageDir = preg_grep('/^([^.])/',scandir($imageDir));
 $scanned_videoDir = preg_grep('/^([^.])/',scandir($videoDir));
 
 $allSlide=array_merge($scanned_imageDir,$scanned_videoDir);
 sort($allSlide);
 
-/*
-print('<pre>');
-print_r($allSlide);
-print('</pre>');
-*/
 
 // 2- On controle et Renomme/Supprime les slides obsolètes
 $now=time();
-$slideDBFile = $storeFolder. $ds .'slideDB.ini';
+$slideDBFile = __dataStore__ . $ds .'slideDB.ini';
 $slideDB = parse_ini_file($slideDBFile,true);
 
-/*
-print('<pre>');
-print_r($slideDB);
-print('</pre>');
-*/
 
 foreach($slideDB as $key => $val){
-	//echo 'date de fin de '. $key .': ' . $slideDB[$key]['dateFin'] .'<br>';
 	if ($slideDB[$key]['dateFin'] < $now && $slideDB[$key]['dateFin'] > 0) {
-		// on renome/supprime le fichier
-		//rename($storeFolder . $ds . $slideDB[$key]['path'] . $ds . $key,$storeFolder . $ds . $slideDB[$key]['path'] . $ds . 'old_'.$key);
-		unlink($storeFolder . $ds . $slideDB[$key]['path'] . $ds . $key);
-		delFromSlideDB($key,$storeFolder. $ds .'slideDB.ini');
-	}    
+		// on renomme/supprime le fichier
+		unlink(__dataStore__ . $ds . $slideDB[$key]['path'] . $ds . $key);
+		unlink(__dataStore__ . $ds . $slideDB[$key]['path'] . $ds . 'thumb_'.$key);
+		$slideDB = delFromSlideDB($key,__dataStore__ . $ds .'slideDB.ini');
+	} 
+	
+	// suppression des slides préfixés par old_ 
+	if (file_exists(__dataStore__ . $ds . $slideDB[$key]['path'] . $ds . 'old_' . $key)) {
+		unlink(__dataStore__ . $ds . $slideDB[$key]['path'] . $ds . 'old_' . $key);
+		unlink(__dataStore__ . $ds . $slideDB[$key]['path'] . $ds . 'thumb_'.$key);
+		$slideDB = delFromSlideDB($key,__dataStore__ . $ds .'slideDB.ini');
+	}  
 }
 
-// 3- On créer le slide.inc
+// 3- On prépare le contenu du slide.inc
 $slideDisplay = array();
 $codec = array('ogg','ogv','ebm','mp4');
 $myString = "";
@@ -57,21 +53,22 @@ $myString = "";
  * sont supporté par HTML5
  * 
  */
- 
+
+
 foreach($slideDB as $key => $val){
 	//echo 'date de debut de '. $key .': ' . $slideDB[$key]['dateDebut'] .'<br>';
 	$slideExt = substr($key,-3);
 	
 	
 	if ($slideDB[$key]['dateDebut'] <= $now) {
-		$slideDisplay[] = substr($storeFolder . $ds . $slideDB[$key]['path'] . $ds . $key,3);
+		$slideDisplay[] = end(explode($ds,__dataStore__ )) . $ds . $slideDB[$key]['path'] . $ds . $key;
 		if (in_array($slideExt,$codec)) {
 			
 		 $myString .='
 <div class="video">
 <img src="data/image/pattern.jpg" alt="" />
 <video controls width="1920" height="1080">
-<source src="' . substr($storeFolder . $ds . $slideDB[$key]['path'] . $ds . $key,3);
+<source src="' . end(explode($ds,__dataStore__ )) . $ds . $slideDB[$key]['path'] . $ds . $key;
 					
 		 switch ($slideExt) {
 			case 'ebm':
@@ -95,20 +92,26 @@ Your browser does not support HTML5 videos.
 		
 
 		} else {
-			$myString .= '<img src="' . substr($storeFolder . $ds . $slideDB[$key]['path'] . $ds . $key,3) . '" alt="" />'."\n";
+			$myString .= '<img src="' . end(explode($ds,__dataStore__ )) . $ds . $slideDB[$key]['path'] . $ds . $key . '" alt="" />'."\n";
 		}
 		
-		file_put_contents('../slides.inc',$myString);
+		
 	}    
 }
 
-/*		
-print('<pre>');
-print_r($slideDisplay);
-print('</pre>');
-*/
+$x = array();
+while (count(explode("\n", trim($myString,"\n"))) <= 2){
+	$i = rand (0, 9);
+	while(!in_array($i,$x)){
+		$x[] = $i;
+		$myString .= '<img src="' . end(explode($ds,__dataStore__ )) . $ds . 'default' . $ds . $i . '.jpg' . '" alt="" />'."\n";
+	}
+}
 
-// Quand on recharge la page web
+// ecriture du slinde.inc
+file_put_contents(__install_DIR__ . $ds.'slides.inc',$myString);
+
+// On détermine le prochain reload
 $slideTime = array();
 foreach($slideDB as $key => $val){
 	if ($slideDB[$key]['dateDebut'] > time()){
@@ -120,22 +123,17 @@ foreach($slideDB as $key => $val){
 }
 sort($slideTime);
 
-$demain = date('m-d-Y', strtotime('+1 days'));
-$demain3H = mktime (3,0,0,$demain);
-if ($slideTime[0]> $demain3H){
-	file_put_contents('../refreshtime.inc',3);
-} else{
-	file_put_contents('../refreshtime.inc',$slideTime[0]);
+$demainMois = date('n', strtotime('+1 days'));
+$demainJours = date('j', strtotime('+1 days'));
+$demainAnnee = date('Y', strtotime('+1 days'));
+
+$demain3H = mktime(__nextRefresh__,0,0,$demainMois,$demainJours,$demainAnnee);
+
+if ((!isset($slideTime[0])) || ($slideTime[0]> $demain3H)){
+	file_put_contents(__install_DIR__ . $ds.'nextTime.inc','<?php $_next='. $demain3H .'; ?>');
+} else {
+	file_put_contents(__install_DIR__ . $ds.'nextTime.inc','<?php $_next='. $slideTime[0] .'; ?>');
 }
-//define('_REFRESHTIME_',$slideTime[0]);
 
-/*
-print('<pre>');
-print_r($slideTime);
-print('</pre>');
-*/
-
-// Comment on recharge la page web a partir du serveur ?????
-//http://raspberrypi.stackexchange.com/questions/10571/refresh-chromium-browser-by-shell-script-with-xdotool-via-php
 
 ?>

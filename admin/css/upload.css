@@ -22,7 +22,7 @@ text-align:center;
 }
 
 .clearBoth {
-clear:both; 
+clear:both;
 }
 
 #wrapper{
@@ -137,7 +137,7 @@ text-align:center;
 border-top: dotted 1px black;
 padding:30px 0 10px 0;
 width:800px;
-margin:0 auto;
+margin:20px auto;
 }
 
 .ui-tabs {
@@ -147,3 +147,7 @@ width:1000px;
 margin:0px auto;
 }
 
+.logout{
+	float:right;
+	vertical-align:middle;
+}

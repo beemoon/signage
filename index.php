@@ -1,3 +1,8 @@
+<?php
+// On charge le fichier des fonctions
+include_once('admin/function.php');
+include('admin/manage.php');
+?>
 <!DOCTYPE html>
 <!--
 
@@ -30,12 +35,12 @@ http://video.online-convert.com/fr/convertir-en-webm
 <!--[if IE 7]>    <html lang="en" class="no-js ie7"> <![endif]-->
 <!--[if IE 8]>    <html lang="en" class="no-js ie8"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class='no-js' lang='en'>
+<html>
 	<!--<![endif]-->
 	<head>
 		<meta charset='utf-8' />
 		<meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
-		<title>Signage v0.5</title>
+		<title>Signage v1.0</title>
 		
 		<meta content='' name='description' />
 		<meta content='' name='author' />
@@ -79,14 +84,14 @@ http://video.online-convert.com/fr/convertir-en-webm
 			</ul>
 		</div>
 		<div class="banner">
-			<span class="defile" style="color:red" data-text="Bonne année 2016...... Bonne année 2016...... Bonne année 2016...... Bonne année 2016...... Bonne année 2016......">
-			  Bonne année 2016...... Bonne année 2016...... Bonne année 2016...... Bonne année 2016...... Bonne année 2016......
+			<span class="defile" style="color:red" data-text="<?php include_once('message.inc'); ?>">
+			  <?php include('message.inc'); ?>
 			</span>
 		</div>
 		<img id="cycle-loader" src="lib/img/ajax-loader.gif" />
 			
 		<div id="maximage">
-			<?php include('slides.inc'); ?>		
+			<?php include_once('slides.inc'); ?>		
 		</div>
 		
 		
@@ -106,10 +111,8 @@ $(function(){
 	$('#maximage').maximage({
 		cycleOptions: {
 			fx: 'fade',
-			speed: 4000, // Has to match the speed for CSS transitions in jQuery.maximage.css (lines 30 - 33)
-			timeout: 15000, // durée affichage d'un slide
-			//prev: '#arrow_left',
-			//next: '#arrow_right',
+			speed: <?php echo __speedSlide__; ?>, 
+			timeout: <?php echo __delaySlide__; ?>, 
 			pause: 0,
 			pauseOnPagerHover: 0,
 			before: function(last,current){
@@ -146,12 +149,6 @@ $(function(){
 	jQuery('.in-slide-content').delay(1200).fadeIn();
 });
 
-// Reload page
-// a une date et heure donnée
-//refreshPageNextDayAt(new Date(2015,11,15,12,05));
-// a une heure donnée pour le lendemain
-refreshPageNextDayAt(<?php include('refreshtime.inc'); ?>);
-
 // Affiche une page web ou un slide (image) par dessus le slideshow			
 function overSlide(_type,url,date) {
 	var _now = new Date().getTime();
@@ -169,31 +166,21 @@ function overSlide(_type,url,date) {
 	}
 };
 
-// Recharge la page
-function refreshPageNextDayAt(date) {
-	var _now = new Date().getTime();
-	if (typeof date === "object"){
-		//new Date(year, month, day, hours, minutes, seconds, milliseconds);
-		var refreshDate=date;
-	}
-	
-	if (typeof date === "number" && date < 24){
-		var refreshDate=new Date(_now.getFullYear(), _now.getMonth(), _now.getDate()+1,date);
-	}
-	
-	if (typeof date === "number" && date > _now){
-		var refreshDate=date;
-	}
-	
-	//alert(refreshDate);
-    setTimeout(function() { window.location.reload(true); }, refreshDate.getTime()-_now.getTime());
+// Auto reload apres une modification des slides - event stream SSE
+if (!!window.EventSource) {
+  var source = new EventSource("refreshSSE.php");
+} else {
+  alert('Navigateur incompatible!!');
 }
-
+  
+source.addEventListener('refreshMe', function(e) {
+  if (e.data == 1){
+	  source.close();
+	  setTimeout(function(){location.reload()},5000);
+	}	
+}, false);
+		
 </script>
-
-
-
-
 
 
   </body>

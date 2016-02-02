@@ -1,6 +1,7 @@
 <?php
+// On charge le fichier des fonctions
+include_once('function.php');
 
-include('function.php');
 $storeFolder = '../data';
 $allowedType = array('image', 'video');
 
@@ -45,7 +46,8 @@ if (!empty($_FILES)) {
     $targetFile =  $targetPath. $ds . $_type[0] . $ds . $targetFileName;
     //$targetFile =  $targetPath. $ds . $_type[0] . $ds . $uniqueID . '.' . $path_parts['extension'];
     
-    move_uploaded_file($tempFile,$targetFile);	
+    move_uploaded_file($tempFile,$targetFile);
+    createThumbs($targetFile,266.7,1.778);
 	
 	/* 
 	 * Traitement des fichiers PDF dans le repertoire temp
@@ -65,6 +67,7 @@ if (!empty($_FILES)) {
 		// rename to unique filename (timestamp)
 		//$targetFile = $targetPath. $ds . $_type[0] . $ds . $uniqueID . '.jpg';
 		//rename($targetPath. $ds . $_type[0] . $ds . $path_parts['filename'] . '.jpg',$targetFile);
+		createThumbs($targetPath. $ds . $_type[0] . $ds . $targetFileName,266.7,1.778);
 	}
 	
 	// ajoute la description du slide
@@ -87,6 +90,7 @@ if (!empty($_FILES)) {
 //file_put_contents($storeFolder. $ds .'debug.ini',print_r($slideInf,true));
 
 /* génération des slides */
-include('manage.php');
+include_once('manage.php');
+touch(__install_DIR__ . $ds.'forceRefresh.txt');
 
 ?>

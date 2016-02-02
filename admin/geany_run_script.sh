@@ -2,7 +2,7 @@
 
 rm $0
 
-php "tab3.php"
+php "tab10.php"
 
 echo "
 

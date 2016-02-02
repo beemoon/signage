@@ -1,3 +1,8 @@
+<?php
+// On charge le fichier des fonctions
+include_once('function.php');
+?>
+
 <div id="wrapper" >	
 	<div class="form_description" >
 		<h1>Paramètres d'affichage</h1>
@@ -125,7 +130,7 @@ Dropzone.options.myDropzoneForm = {
 				
 			this.on("success", function (file, response) {
 				alert('Ajout ok');
-				location.reload(true);
+				location.assign(window.location);
 			});	
 			
 			this.on("addedfile", function(file) {
@@ -137,21 +142,7 @@ Dropzone.options.myDropzoneForm = {
 				this.emit("thumbnail", file, "img/pdf.png");
 				}
 				$('#titreSlide').val(file.name);
-			});
-			
-			/*			
-			this.on("sendingmultiple", function() {
-			  
 			});			
-			this.on("successmultiple", function(files, response) {
-				alert('Ajout ok');
-				location.reload(true);
-			});
-			this.on("errormultiple", function(files, response) {
-			  
-			});
-			*/
-					
 	}
     	
 };
